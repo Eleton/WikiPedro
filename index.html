@@ -1,0 +1,74 @@
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<body>
+<script>
+//Width and Height constants
+var W = 800, H = 600;
+
+//Test data. Right now only the simpleData variable is used, but the other data will probably be useful in the future
+var KTH = {
+	"name": "KTH",
+	"links": ["Chalmers", "Science", "Stockholm"]
+};
+var Chalmers = {
+	"name": "Chalmers",
+	"links": ["KTH", "Science"]
+};
+var Science = {
+	"name": "Science",
+	"links": ["KTH", "Chalmers"]
+};
+var Stockholm = {
+	"name": "Stockholm",
+	"links": ["KTH"]
+};
+
+var data = [KTH, Chalmers, Science, Stockholm];
+var simpleData = [KTH];
+
+var svg = d3.select("body")
+	.append("svg")
+	.attr("width", W)
+	.attr("height", H);
+				
+
+//This Rectable is only to get a black border around the SVG, for reference. There should probably be a better way to do this.
+svg.append("rect")
+	.attr("width", W)
+	.attr("height", H)
+	.style("fill", "white")
+	.style("stroke", "black");
+
+//Creation of the main node, the loaded article. At the moment it's KTH.
+var mainNode = svg.selectAll("g")
+	.data(simpleData)
+	.enter().append("g")
+	.attr("transform", function(d, i){return "translate(" + W/2 + ", " + H/2 + ")"});
+
+mainNode.append("circle")
+	.style("stroke", "black")
+	.style("fill", "white")
+	.attr("r", W/8);
+
+mainNode.append("text")
+	.text(function(d){return d.name})
+	.attr("font-size", "20px")
+	.attr("dx", function(d){return -20/4*(d.name.length)});
+
+//Creation of linked nodes. Stockhlm, Chalmers and Science at the moment.
+var subNodes = mainNode.selectAll("g")
+	.data(function(d){return d.links})
+	.enter().append("g")
+	.attr("transform", function(d, i){return "translate(" + 200*Math.cos((Math.PI*2/3)*i) + ", " + 200*Math.sin((2*Math.PI/3)*i) + ")"});
+
+subNodes.append("circle")
+	.style("stroke", "red")
+	.style("fill", "white")
+	.attr("r", W/12);
+
+subNodes.append("text")
+	.text(function(d){return d})
+	.attr("font-size", "18px")
+	.attr("dx", function(d){return -18/4*(d.length)});
+
+</script>
+</body>
